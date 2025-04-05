@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useCallback } from "react";
 import { baseUrl } from "../baseUrl";
 import { useNavigate } from "react-router-dom";
 
@@ -11,40 +11,40 @@ export default function AppContextProvider({ children }) {
   const [totalPages, setTotalPages] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch Blog Data
-  const fetchBlogPosts = async (page = 1, tag = null, category) => {
+  // ✅ Memoized fetchBlogPosts to prevent recreation on every render
+  const fetchBlogPosts = useCallback(async (page = 1, tag = null, category = null) => {
     setLoading(true);
     let url = `${baseUrl}?page=${page}`;
-    if (tag) {
-      url += `&tag=${tag}`;
-    }
-    if (category) {
-      url += `&category=${category}`;
-    }
+    if (tag) url += `&tag=${tag}`;
+    if (category) url += `&category=${category}`;
+
     try {
       const res = await fetch(url);
       const data = await res.json();
-      if (!data.posts || data.posts.length === 0)
+
+      if (!data.posts || data.posts.length === 0) {
         throw new Error("Something Went Wrong");
-      console.log("Api Response", data);
+      }
+
+      console.log("API Response:", data);
       setPage(data.page);
       setPosts(data.posts);
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.log("Error in Fetching BlogPosts", error);
+      console.error("Error in Fetching BlogPosts", error);
       setPage(1);
       setPosts([]);
       setTotalPages(null);
     }
+
     setLoading(false);
-  };
+  }, []); // ✅ No deps – only created once
 
-  // Handle When Next and Previous button are clicked
-  const handlePageChange = (page) => {
-    navigate({search : `?page=${page}`});
+  // ✅ Memoized page handler
+  const handlePageChange = useCallback((page) => {
+    navigate({ search: `?page=${page}` });
     setPage(page);
-
-  };
+  }, [navigate]);
 
   const value = {
     posts,

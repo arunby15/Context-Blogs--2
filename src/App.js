@@ -11,7 +11,7 @@ import { Routes, Route, useSearchParams, useLocation } from "react-router-dom";
 
 export default function App() {
   const { fetchBlogPosts } = useContext(AppContext);
-  const [searchParams,setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const location = useLocation();
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function App() {
     else{
       fetchBlogPosts(Number(page))
     }
-  }, [location.pathname,location.search]);
+  }, [location.pathname,location.search,searchParams,fetchBlogPosts]);
 
   return (
     <Routes>

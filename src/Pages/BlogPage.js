@@ -14,27 +14,27 @@ const BlogPage = () => {
   const newBaseUrl = "https://codehelp-apis.vercel.app/api/";
 
   useEffect(() => {
-    async function fetchRelatedBlogs() {
-      setLoading(true);
-      let url = `${newBaseUrl}get-blog?blogId=${blogId}`;
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        setBlog(data.blog);
-        setRelatedBlogs(data.relatedBlogs);
-      } catch (err) {
-        console.log(err);
-        setBlog(null);
-        setRelatedBlogs([]);
-      }
-      setLoading(false);
+  async function fetchRelatedBlogs() {
+    setLoading(true);
+    let url = `${newBaseUrl}get-blog?blogId=${blogId}`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      setBlog(data.blog);
+      setRelatedBlogs(data.relatedBlogs);
+    } catch (err) {
+      console.log(err);
+      setBlog(null);
+      setRelatedBlogs([]);
     }
-  
-    if (blogId) {
-      fetchRelatedBlogs();
-    }
-  }, [blogId, setLoading]); // blogId used inside, so it's safe and necessary here
-  
+    setLoading(false);
+  }
+
+  if (blogId) {
+    fetchRelatedBlogs();
+  }
+}, [blogId, setLoading]); // blogId used inside, so it's safe and necessary here
+
 
   return (
     <div className="min-h-screen bg-gray-50">
